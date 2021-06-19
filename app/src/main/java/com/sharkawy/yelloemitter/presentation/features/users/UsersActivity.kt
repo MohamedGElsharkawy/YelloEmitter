@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,12 @@ import com.sharkawy.yelloemitter.databinding.ActivityMainBinding
 import com.sharkawy.yelloemitter.entities.Status
 
 class UsersActivity : AppCompatActivity() {
+    private val INTENT_ACTION = "com.sharkawy.yellomiddleman"
+    private val INTENT_KEY = "Yello"
+    private val INTENT_VALUE = "This message sent from Yello Emitter"
+    private val INTENT_COMPONENT_PACKAGE = "com.sharkawy.yellomiddleman"
+    private val INTENT_COMPONENT_PACKAGE_CLASS = "com.sharkawy.yellomiddleman.MiddleManReceiver"
+
 
     private var binding: ActivityMainBinding? = null
     private lateinit var viewModel: UsersViewModel
@@ -87,8 +94,10 @@ class UsersActivity : AppCompatActivity() {
         val cancelBtn = dialogView.findViewById<MaterialButton>(R.id.cancel_btn)
 
         confirmBtn.setOnClickListener {
-            sendUserToMiddeMan()
+            sendUserToMiddleMan()
             builder.dismiss()
+            Toast.makeText(applicationContext, "User sent to Middle Man!", Toast.LENGTH_SHORT)
+                .show()
         }
 
         cancelBtn.setOnClickListener {
@@ -96,12 +105,15 @@ class UsersActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendUserToMiddeMan() {
+    private fun sendUserToMiddleMan() {
         val intent = Intent()
-        intent.action = "com.sharkawy.yellomiddleman"
-        intent.putExtra("KeyName", "This message sent from Yello Emitter")
+        intent.action = INTENT_ACTION
+        intent.putExtra(INTENT_KEY, INTENT_VALUE)
         intent.component =
-            ComponentName("com.sharkawy.yellomiddleman", "com.sharkawy.yellomiddleman.MiddleManReceiver")
+            ComponentName(
+                INTENT_COMPONENT_PACKAGE,
+                INTENT_COMPONENT_PACKAGE_CLASS
+            )
         sendBroadcast(intent)
     }
 
