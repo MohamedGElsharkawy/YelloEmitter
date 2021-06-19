@@ -25,8 +25,8 @@ class UsersAdapter(
     }
 
     class ViewHolder(
-        val binding: ItemUserBinding,
-        val itemClickListener: (item: UsersResponseItem) -> Unit
+        private val binding: ItemUserBinding,
+        private val itemClickListener: (item: UsersResponseItem) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(response: UsersResponseItem?) {
             binding.userNameTv.text = response?.username
