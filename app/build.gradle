@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+
 }
 
 android {
@@ -12,6 +14,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
+        multiDexEnabled true
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -30,6 +33,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
 }
 
 dependencies { configuration ->
@@ -41,6 +48,7 @@ dependencies { configuration ->
     androidX(configuration)
     kotlinX(configuration)
     archComponentX(configuration)
+    httpDependencies(configuration)
 }
 
 private static void androidX(configuration) {
@@ -48,6 +56,7 @@ private static void androidX(configuration) {
     configuration.implementation 'androidx.appcompat:appcompat:1.3.0'
     configuration.implementation 'com.google.android.material:material:1.3.0'
     configuration.implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    configuration.implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 }
 
 private static void kotlinX(configuration) {
@@ -59,4 +68,16 @@ private static void archComponentX(configuration) {
     def lifecycle_version = "2.3.0"
     configuration.implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     configuration.implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    configuration.implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+}
+
+private static void httpDependencies(configuration) {
+    def retrofit_version = "2.9.0"
+    configuration.implementation 'com.google.code.gson:gson:2.8.6'
+    configuration.implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    configuration.implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    configuration.implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    configuration.implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    configuration.implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 }
