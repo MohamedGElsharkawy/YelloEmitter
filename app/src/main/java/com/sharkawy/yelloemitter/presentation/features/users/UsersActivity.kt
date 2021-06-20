@@ -11,16 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 import com.sharkawy.yelloemitter.R
 import com.sharkawy.yelloemitter.databinding.ActivityMainBinding
 import com.sharkawy.yelloemitter.entities.Status
+import com.sharkawy.yelloemitter.entities.users.User
+import com.sharkawy.yelloemitter.entities.users.UsersResponseItem
+
 
 class UsersActivity : AppCompatActivity() {
     private val INTENT_ACTION = "com.sharkawy.yellomiddleman"
-    private val INTENT_KEY = "Yello"
-    private val INTENT_VALUE = "This message sent from Yello Emitter"
+    private val INTENT_KEY = "EmitterUser"
     private val INTENT_COMPONENT_PACKAGE = "com.sharkawy.yellomiddleman"
-    private val INTENT_COMPONENT_PACKAGE_CLASS = "com.sharkawy.yellomiddleman.MiddleManReceiver"
+    private val INTENT_COMPONENT_PACKAGE_CLASS =
+        "com.sharkawy.yellomiddleman.presentation.MiddleManReceiver"
 
 
     private var binding: ActivityMainBinding? = null
@@ -48,8 +52,8 @@ class UsersActivity : AppCompatActivity() {
 
     private fun setupAdapter() {
         binding?.usersRv?.adapter =
-            UsersAdapter({
-                showConfirmDialog()
+            UsersAdapter({ user ->
+                showConfirmDialog(user)
             }, mutableListOf())
     }
 
@@ -68,8 +72,8 @@ class UsersActivity : AppCompatActivity() {
                     Status.SUCCESS -> {
                         binding?.swipeRefresh?.isRefreshing = false
                         resource.data?.let { users ->
-                            binding?.usersRv?.adapter = UsersAdapter({
-                                showConfirmDialog()
+                            binding?.usersRv?.adapter = UsersAdapter({ user ->
+                                showConfirmDialog(user)
                             }, users.toMutableList())
                         }
                     }
@@ -84,7 +88,7 @@ class UsersActivity : AppCompatActivity() {
         })
     }
 
-    private fun showConfirmDialog() {
+    private fun showConfirmDialog(user: UsersResponseItem) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_user_confirm, null)
         val builder = AlertDialog.Builder(this)
             .setView(dialogView)
@@ -94,7 +98,7 @@ class UsersActivity : AppCompatActivity() {
         val cancelBtn = dialogView.findViewById<MaterialButton>(R.id.cancel_btn)
 
         confirmBtn.setOnClickListener {
-            sendUserToMiddleMan()
+            sendUserToMiddleMan(user)
             builder.dismiss()
             Toast.makeText(applicationContext, "User sent to Middle Man!", Toast.LENGTH_SHORT)
                 .show()
@@ -105,10 +109,10 @@ class UsersActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendUserToMiddleMan() {
+    private fun sendUserToMiddleMan(user: UsersResponseItem) {
         val intent = Intent()
         intent.action = INTENT_ACTION
-        intent.putExtra(INTENT_KEY, INTENT_VALUE)
+        intent.putExtra(INTENT_KEY, Gson().toJson(User(user.username, user.phone)))
         intent.component =
             ComponentName(
                 INTENT_COMPONENT_PACKAGE,
