@@ -3,4 +3,6 @@
     <string name="confirmation_message">Are you sure to send this user to MiddleMan?</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="save_status">Current user saved in Receiver successfully!</string>
+    <string name="ok">OK</string>
 </resources>
